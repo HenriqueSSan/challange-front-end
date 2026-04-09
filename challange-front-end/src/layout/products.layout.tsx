@@ -7,14 +7,12 @@ export function ProductsLayout() {
   const setSearchGlobal = useSearchStore((state) => state.setSearch)
 
   const searchRef = useRef<HTMLInputElement | null>(null)
-  const mobileSearchRef = useRef<HTMLInputElement | null>(null)
 
   const onSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault()
     e.stopPropagation()
 
     setSearchGlobal(searchRef.current.value)
-    setSearchGlobal(mobileSearchRef.current.value)
   }
 
   return (
