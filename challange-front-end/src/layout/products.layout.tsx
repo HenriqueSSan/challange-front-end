@@ -1,9 +1,13 @@
 import { Outlet } from "react-router"
 
-import { useRef, type ChangeEvent } from "react"
+import { useRef, useState, type ChangeEvent } from "react"
+import { useCartStore } from "../module_store/cartStore"
 import { useSearchStore } from "../module_store/searchStore"
+import { CartList } from "./cart-list"
 
 export function ProductsLayout() {
+  const [showCartList, setShowCartList] = useState(false)
+  const cartProducts = useCartStore((state) => state.products)
   const setSearchGlobal = useSearchStore((state) => state.setSearch)
 
   const searchRef = useRef<HTMLInputElement | null>(null)
@@ -41,19 +45,26 @@ export function ProductsLayout() {
             </form>
 
             <div className="lg:max-w-[190px] lg:w-full flex justify-end gap-6">
-              <button>
+              <button onClick={() => setShowCartList((prev) => !prev)} className="relative">
                 <span className="fi fi-sr-shopping-cart leading-0 text-2xl"></span>
                 <span className="sr-only">Abrir carinho</span>
+                {Object.keys(cartProducts).length > 0 && (
+                  <span className="absolute top-0 left-9/10 font-bold -translate-y-1/2 text-white text-sm flex items-center justify-center bg-red-500 rounded-full size-6">
+                    {Object.keys(cartProducts).length}
+                  </span>
+                )}
               </button>
 
               <button className="lg:hidden">
                 <span className="fi fi-rr-bars-staggered leading-0 text-2xl"></span>
-                <span className="sr-only">Abrir carinho</span>
+                <span className="sr-only">Abrir menu</span>
               </button>
             </div>
           </div>
         </div>
       </header>
+
+      <CartList show={showCartList} close={() => setShowCartList(false)} />
 
       <div className="pt-[96px] lg:pt-24 px-10 lg:px-0">
         <Outlet />

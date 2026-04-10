@@ -4,8 +4,14 @@ import type { CategoryListDomain, ProductListDomain } from "../../api/domain/typ
 import { FormatHelper } from "../../../../helper/format.helper"
 import { useSearchStore } from "../../../../module_store/searchStore"
 import { categoryList } from "../../api/domain/category.list"
+import { useCartStore } from "../../../../module_store/cartStore"
+import { Link } from "react-router"
 
 function ProductCard({ ...props }: ProductListDomain.Model) {
+  const addProductInCart = useCartStore((state) => state.addProductInCart)
+  const removedProductInCart = useCartStore((state) => state.removeProductInCart)
+  const products = useCartStore((state) => state.products)
+
   return (
     <div className="w-full h-full relative flex flex-col items-start">
       <figure className="bg-gray-200 mb-2.5 p-1.5 rounded-lg ">
@@ -19,9 +25,21 @@ function ProductCard({ ...props }: ProductListDomain.Model) {
       <p className="text-green-500 text-3xl h-[50px] font-bold">{FormatHelper.toCurrency(props.price).display}</p>
       <p className="text-gray-400 leading-6 h-[80px] w-full lg:max-w-9/10">{props.description.substring(0, 56)}</p>
 
-      <button className="bg-black w-full text-center hover:bg-gray-800 transition-all text-white py-1.5 px-4 rounded-sm">
-        Adicionar ao carrinho
-      </button>
+      {products[props.id] ? (
+        <button
+          onClick={() => removedProductInCart(props)}
+          className="bg-black w-full text-center hover:bg-gray-800 transition-all text-white py-1.5 px-4 rounded-sm"
+        >
+          Remover do carrinho
+        </button>
+      ) : (
+        <button
+          onClick={() => addProductInCart(props)}
+          className="bg-black w-full text-center hover:bg-gray-800 transition-all text-white py-1.5 px-4 rounded-sm"
+        >
+          Adicionar ao carrinho
+        </button>
+      )}
     </div>
   )
 }
@@ -29,9 +47,9 @@ function ProductCard({ ...props }: ProductListDomain.Model) {
 function CategoryTag({ ...props }: CategoryListDomain.Model) {
   return (
     <div>
-      <a className="flex p-1.5 text-sm hover:bg-gray-200 rounded-sm" href="/">
+      <Link className="flex p-1.5 text-sm hover:bg-gray-200 rounded-sm" to={`/products/categories/${props.slug}`}>
         {props.name}
-      </a>
+      </Link>
     </div>
   )
 }
